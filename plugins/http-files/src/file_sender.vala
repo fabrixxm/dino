@@ -63,6 +63,9 @@ public class HttpFileSender : FileSender, Object {
             // Wait until we know the server id of the file share message (in MUCs; we get that from the reflected message)
             if (conversation.type_.is_muc_semantic()) {
                 if (file_share_message.server_id == null) {
+                    Timeout.add_once(2000, () => {
+                        file_share_message.server_id = file_share_message.stanza_id;
+                    });
                     ulong server_id_notify_id = file_share_message.notify["server-id"].connect(() => {
                         Idle.add(send_file.callback);
                     });
